@@ -29,4 +29,4 @@ Open:
 - `survey-compare.html` has no `<html>`/`<head>` because it was published through Claude's artifact system, which wraps it. Do not add those tags to it. `build-standalone.ps1` produces the complete file in `dist/`.
 - The same parsing and comparison functions exist in both `survey-compare.html` and `survey-compare-core.js`. If a rule changes, change both.
 - Dark mode is the instrument-panel look, light mode is the printed-report look, both driven by the `:root` token block at the top of the stylesheet. Restyle there, not in component rules.
-- After any change to the page, rebuild `dist/` and commit both.
+- After any change to the page, rebuild `dist/` and commit both. `dist/` is also the handout folder for flash drives: the build copies `icons/survey-compare.ico` and the shortcut installer into it.
