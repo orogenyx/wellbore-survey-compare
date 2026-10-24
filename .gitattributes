@@ -4,4 +4,3 @@
 *.png binary
 *.zip binary
 *.ico binary
-*.cmd text eol=crlf

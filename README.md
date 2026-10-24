@@ -14,9 +14,8 @@ Single HTML page, no framework, no build step needed to run it. Open `dist/Surve
 | `survey-compare-core.js` | The parsing and comparison logic lifted out of the page into a dependency-free module (UMD: `require()` it or use the `SurveyCompare` global). This is the piece to reuse in another application. |
 | `build-standalone.ps1` | Builds `dist\Survey Compare.html`, a single self-contained file that opens offline from a double-click. Inlines SheetJS. |
 | `vendor\xlsx.full.min.js` | SheetJS 0.18.5, used to read CSV, XLS and XLSX. Pinned; only needed for parsing, not for comparing. |
-| `icons/` | `icon.svg` plus `icon-16/32/64.png`, the browser-tab icon, and `survey-compare.ico` for the desktop shortcut (amber needle, red station dot). The SVG is the source; the PNGs are what the build inlines, because Chromium ignores SVG favicons on pages opened from disk. Re-render the PNGs from the SVG if the icon changes. |
-| `dist\` | Build output and the folder to copy onto a flash drive: `Survey Compare.html` (open it in any browser), the icon, and the shortcut installer. |
-| `install-shortcut.ps1`, `Install desktop shortcut.cmd` | Source of the installer that `dist\` carries. Copies the page and icon to `%LOCALAPPDATA%\SurveyCompare` and puts a Survey Compare shortcut on the desktop. No admin rights needed. |
+| `icons/` | `icon.svg` plus `icon-16/32/64.png`, the browser-tab icon (amber needle, red station dot), and `survey-compare.ico`, the same icon for desktop shortcuts. The SVG is the source; the PNGs are what the build inlines, because Chromium ignores SVG favicons on pages opened from disk. Re-render the PNGs from the SVG if the icon changes. |
+| `dist\Survey Compare.html` | Build output. Open it in any browser. |
 | `theme-previews.html` | The four visual directions that were mocked up before choosing the instrument-panel / printed-report pair. Reference only. |
 | `index.html` | Root page for GitHub Pages; forwards to `dist/Survey Compare.html`. |
 | `preview.html` | Dev helper for previewing `survey-compare.html` locally. See Development. Not needed by users. |
@@ -59,13 +58,6 @@ result.rows[0]         // { md, items: { mwd, dd, cp }, deltas: { dd: { dInc, dA
 
 Dark mode is an instrument-panel look (graphite seams, amber readouts, status lamps). Light mode is a printed survey report (paper, rules, typewriter figures, red pencil on discrepancies). Both come from one token set at the top of the stylesheet; nothing else in the CSS knows which theme it is in, so restyling means editing that block only.
 
-## Putting it on a flash drive
-
-Copy the `dist` folder onto the drive. On any Windows PC:
-
-- Double-click `Survey Compare.html` to use it straight from the drive, or
-- Double-click `Install desktop shortcut.cmd` to copy it onto that PC and get a Survey Compare icon on the desktop. It works offline afterwards and needs no admin rights.
-
 ## Development
 
 `survey-compare.html` is the source of the page. It has no `<html>`/`<head>` of its own, so do not open it directly; preview it with `preview.html`, which fetches the page into a skeleton:
@@ -80,7 +72,7 @@ then open http://localhost:8000/preview.html. After any change, rebuild the offl
 powershell -ExecutionPolicy Bypass -File .\build-standalone.ps1
 ```
 
-Writes `dist\Survey Compare.html` with SheetJS and the favicons inlined, and copies the icon and installer alongside it. Fonts load from Google Fonts when online and fall back to Arial Narrow / Consolas offline; everything else is self-contained.
+Writes `dist\Survey Compare.html` with SheetJS and the favicons inlined. Fonts load from Google Fonts when online and fall back to Arial Narrow / Consolas offline; everything else is self-contained.
 
 ## License
 

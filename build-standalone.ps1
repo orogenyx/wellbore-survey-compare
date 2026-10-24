@@ -1,5 +1,4 @@
-# Builds dist\: Survey Compare.html (a single self-contained file that opens offline) plus the
-# icon and installer, so dist\ is the complete folder to copy onto a flash drive.
+# Builds dist\Survey Compare.html: a single self-contained file that opens offline.
 # Run from this folder:  powershell -ExecutionPolicy Bypass -File .\build-standalone.ps1
 # Source: survey-compare.html (the page as published to Claude, no <html>/<head> of its own)
 #         vendor\xlsx.full.min.js (SheetJS 0.18.5, inlined so no internet is needed)
@@ -49,10 +48,3 @@ New-Item -ItemType Directory -Force $outDir | Out-Null
 [System.IO.File]::WriteAllText($out, $doc, $utf8)
 $kb = [math]::Round((Get-Item $out).Length / 1KB)
 Write-Host "Built $out ($kb KB)"
-
-# The handout extras: dist\ is the folder to copy onto a flash drive, so it also carries the
-# desktop icon and the installer that puts a shortcut on another PC.
-foreach ($extra in 'icons\survey-compare.ico', 'install-shortcut.ps1', 'Install desktop shortcut.cmd') {
-  Copy-Item (Join-Path $root $extra) $outDir -Force
-}
-Write-Host "Copied survey-compare.ico, install-shortcut.ps1 and Install desktop shortcut.cmd into dist"
