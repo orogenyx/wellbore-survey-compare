@@ -18,7 +18,7 @@ Single HTML page, no framework, no build step needed to run it. Open `dist/Surve
 | `dist\Survey Compare.html` | Build output. Open it in any browser. |
 | `theme-previews.html` | The four visual directions that were mocked up before choosing the instrument-panel / printed-report pair. Reference only. |
 | `index.html` | Root page for GitHub Pages; forwards to `dist/Survey Compare.html`. |
-| `preview.html` | Dev helper that wraps `survey-compare.html` in a page skeleton for local testing over `python -m http.server`. Not needed by users. |
+| `preview.html` | Dev helper for previewing `survey-compare.html` locally. See Development. Not needed by users. |
 
 ## Rules the comparison follows
 
@@ -54,17 +54,25 @@ result.rows[0]         // { md, items: { mwd, dd, cp }, deltas: { dd: { dInc, dA
 
 `compareSurveys` has no dependencies at all, so it can run server-side if the host application already has the station lists.
 
-## Building the offline file
+## Design
+
+Dark mode is an instrument-panel look (graphite seams, amber readouts, status lamps). Light mode is a printed survey report (paper, rules, typewriter figures, red pencil on discrepancies). Both come from one token set at the top of the stylesheet; nothing else in the CSS knows which theme it is in, so restyling means editing that block only.
+
+## Development
+
+`survey-compare.html` is the source of the page. It has no `<html>`/`<head>` of its own, so do not open it directly; preview it with `preview.html`, which fetches the page into a skeleton:
+
+```bash
+python -m http.server
+```
+
+then open http://localhost:8000/preview.html. After any change, rebuild the offline file and commit both:
 
 ```powershell
 powershell -ExecutionPolicy Bypass -File .\build-standalone.ps1
 ```
 
-Writes `dist\Survey Compare.html`. Fonts load from Google Fonts when online and fall back to Arial Narrow / Consolas offline; everything else is self-contained.
-
-## Design
-
-Dark mode is an instrument-panel look (graphite seams, amber readouts, status lamps). Light mode is a printed survey report (paper, rules, typewriter figures, red pencil on discrepancies). Both come from one token set at the top of the stylesheet; nothing else in the CSS knows which theme it is in, so restyling means editing that block only.
+Writes `dist\Survey Compare.html` with SheetJS and the favicons inlined. Fonts load from Google Fonts when online and fall back to Arial Narrow / Consolas offline; everything else is self-contained.
 
 ## License
 
