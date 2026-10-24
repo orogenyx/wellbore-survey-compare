@@ -1,0 +1,215 @@
+<title>Survey Compare Themes</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Condensed:wght@600;700&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500;600&family=Barlow+Condensed:wght@600;700&family=Courier+Prime:wght@400;700&family=JetBrains+Mono:wght@400;600&family=Archivo+Narrow:wght@600;700&display=swap">
+<style>
+/* Layout: four self-contained mock panels, each carrying its own tokens, so every
+   direction is judged on the same slice of the real app. */
+:root { --bg: #e9ecef; --ink: #14202b; --muted: #6b7784; --f-body: "IBM Plex Sans", system-ui, sans-serif; }
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) { --bg: #0a0d11; --ink: #e8edf2; --muted: #8e99a6; color-scheme: dark; } }
+:root[data-theme="dark"] { --bg: #0a0d11; --ink: #e8edf2; --muted: #8e99a6; color-scheme: dark; }
+* { box-sizing: border-box; }
+body { margin: 0; background: var(--bg); color: var(--ink); font: 14px/1.5 var(--f-body); }
+.wrap { max-width: 1320px; margin: 0 auto; padding-block: 24px 48px; padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); }
+h1 { font: 700 26px/1.1 "IBM Plex Sans Condensed", system-ui, sans-serif; margin: 0 0 4px; }
+.intro { color: var(--muted); margin: 0 0 20px; max-width: 70ch; }
+.grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 22px; }
+@media (max-width: 900px) { .grid { grid-template-columns: 1fr; } }
+.opt { min-width: 0; }
+.opt > h2 { font: 600 15px/1.3 var(--f-body); margin: 0 0 4px; display: flex; align-items: baseline; gap: 8px; }
+.opt > h2 .n { font: 700 12px "IBM Plex Mono", monospace; color: var(--muted); }
+.opt > h2 .rec { font-size: 11px; font-weight: 600; letter-spacing: 0.06em; text-transform: uppercase; color: #1c6f8f; background: rgba(28,111,143,0.12); padding: 2px 7px; border-radius: 4px; }
+.opt > p { margin: 0 0 10px; color: var(--muted); font-size: 13px; }
+.frame { border-radius: 10px; overflow: hidden; border: 1px solid rgba(127,127,127,0.25); }
+.mock { padding: 18px; min-height: 360px; }
+.mock table { border-collapse: collapse; width: 100%; font-size: 12.5px; }
+.mock td, .mock th { padding: 6px 9px; text-align: right; white-space: nowrap; }
+.mock th.l, .mock td.l { text-align: left; }
+.mock .mono { font-variant-numeric: tabular-nums; }
+
+/* ---- 1 · Instrument panel ---- */
+.p1 { --s: #0f1316; --s2: #161c21; --seam: #262e36; --ink: #d9e0e6; --mute: #76838e; --amber: #ffb424; --red: #ff4f3a; --grn: #37d67a; --fd: "Barlow Condensed", "Arial Narrow", sans-serif; --fm: "JetBrains Mono", Consolas, monospace; background: var(--s); color: var(--ink); font-family: var(--fm); position: relative; }
+.p1::after { content: ""; position: absolute; inset: 0; pointer-events: none; background: repeating-linear-gradient(0deg, rgba(255,255,255,0.025) 0 1px, transparent 1px 3px); }
+.p1 .mast { display: flex; justify-content: space-between; align-items: flex-end; gap: 12px; padding-bottom: 12px; border-bottom: 1px solid var(--seam); flex-wrap: wrap; }
+.p1 .eyebrow { font-size: 10px; letter-spacing: 0.2em; color: var(--mute); }
+.p1 h3 { font: 700 26px/1 var(--fd); margin: 4px 0 0; letter-spacing: 0.02em; color: #fff; }
+.p1 .lamp { display: inline-flex; align-items: center; gap: 8px; font-size: 11px; letter-spacing: 0.1em; color: var(--amber); border: 1px solid var(--seam); padding: 6px 10px; background: var(--s2); }
+.p1 .lamp i { width: 8px; height: 8px; border-radius: 50%; background: var(--red); box-shadow: 0 0 8px var(--red); }
+.p1 .tiles { display: grid; grid-template-columns: 1fr 1fr; gap: 1px; background: var(--seam); border: 1px solid var(--seam); margin: 14px 0; }
+.p1 .tile { background: var(--s2); padding: 12px 14px; }
+.p1 .tile .k { font-size: 10px; letter-spacing: 0.16em; color: var(--mute); }
+.p1 .tile .v { font: 700 34px/1 var(--fd); color: var(--amber); margin: 4px 0 6px; text-shadow: 0 0 10px rgba(255,180,36,0.35); }
+.p1 .tile .v.ok { color: var(--grn); text-shadow: 0 0 10px rgba(55,214,122,0.35); }
+.p1 .tile .d { font-size: 11px; color: var(--mute); }
+.p1 .tile .d b { color: var(--ink); font-weight: 500; }
+.p1 table { border: 1px solid var(--seam); background: var(--s2); }
+.p1 th { font: 600 10px/1 var(--fm); letter-spacing: 0.14em; color: var(--mute); border-bottom: 1px solid var(--seam); background: var(--s); }
+.p1 th.g { color: #fff; font-size: 11px; border-bottom: 2px solid var(--amber); text-align: left; padding-top: 8px; }
+.p1 td { border-bottom: 1px solid var(--seam); color: var(--amber); }
+.p1 td.l { color: #fff; }
+.p1 td.bad { color: #fff; background: rgba(255,79,58,0.22); box-shadow: inset 0 0 0 1px var(--red); font-weight: 600; }
+.p1 td.gone { color: var(--mute); font-style: italic; text-align: center; background: repeating-linear-gradient(135deg, transparent 0 6px, rgba(255,255,255,0.04) 6px 7px); }
+.p1 .st { display: inline-flex; align-items: center; gap: 6px; font-size: 10px; letter-spacing: 0.12em; color: var(--ink); }
+.p1 .st i { width: 7px; height: 7px; border-radius: 50%; background: var(--grn); box-shadow: 0 0 6px var(--grn); }
+.p1 .st.bad i { background: var(--red); box-shadow: 0 0 6px var(--red); }
+.p1 .st.miss i { background: var(--amber); box-shadow: 0 0 6px var(--amber); }
+
+/* ---- 2 · Printed survey report ---- */
+.p2 { --paper: #fbfaf6; --ink: #1a1a1a; --mute: #6e6a62; --rule: #c9c4b8; --pencil: #c4261d; --fd: "Archivo Narrow", "Arial Narrow", sans-serif; --fm: "Courier Prime", "Courier New", monospace; background: var(--paper); color: var(--ink); font-family: var(--fd); }
+.p2 .mast { display: flex; justify-content: space-between; align-items: flex-start; gap: 12px; padding-bottom: 10px; border-bottom: 2px solid var(--ink); flex-wrap: wrap; }
+.p2 .eyebrow { font-size: 11px; letter-spacing: 0.14em; color: var(--mute); text-transform: uppercase; }
+.p2 h3 { font: 700 28px/1 var(--fd); margin: 2px 0 0; text-transform: uppercase; }
+.p2 .sub { font-family: var(--fm); font-size: 12px; color: var(--mute); margin-top: 4px; }
+.p2 .stamp { font: 700 15px/1 var(--fd); letter-spacing: 0.12em; color: var(--pencil); border: 2.5px solid var(--pencil); padding: 7px 10px; transform: rotate(-4deg); text-transform: uppercase; opacity: 0.85; }
+.p2 .tiles { display: flex; gap: 28px; margin: 14px 0; font-family: var(--fm); font-size: 13px; }
+.p2 .tile .k { font-size: 11px; color: var(--mute); text-transform: uppercase; letter-spacing: 0.08em; }
+.p2 .tile .v { font: 700 30px/1.1 var(--fd); margin: 2px 0; }
+.p2 .tile .v.bad { color: var(--pencil); }
+.p2 table { font-family: var(--fm); border-top: 1px solid var(--ink); border-bottom: 1px solid var(--ink); }
+.p2 th { font: 700 11px var(--fd); letter-spacing: 0.1em; text-transform: uppercase; border-bottom: 1px solid var(--rule); }
+.p2 th.g { border-bottom: 1px solid var(--ink); text-align: left; padding-top: 8px; font-size: 12px; }
+.p2 td { border-bottom: 1px dotted var(--rule); }
+.p2 td.bad { color: var(--pencil); font-weight: 700; text-decoration: underline wavy var(--pencil); text-underline-offset: 3px; }
+.p2 td.gone { color: var(--mute); text-align: center; letter-spacing: 0.1em; }
+.p2 .st { font: 700 11px var(--fd); letter-spacing: 0.1em; text-transform: uppercase; }
+.p2 .st.bad { color: var(--pencil); }
+.p2 .st.miss { color: #8a6a00; }
+
+/* ---- 3 · Blueprint ---- */
+.p3 { --blue: #0b3a6a; --blue2: #0e4680; --line: rgba(255,255,255,0.18); --ink: #e9f2fb; --cyan: #7fe3ff; --orange: #ff9a3c; --fd: "Barlow Condensed", "Arial Narrow", sans-serif; --fm: "IBM Plex Mono", monospace; background-color: var(--blue); background-image: radial-gradient(rgba(255,255,255,0.14) 1px, transparent 1px); background-size: 14px 14px; color: var(--ink); font-family: var(--fm); }
+.p3 .mast { display: flex; justify-content: space-between; align-items: flex-end; gap: 12px; padding-bottom: 10px; border-bottom: 1px solid var(--cyan); flex-wrap: wrap; }
+.p3 .eyebrow { font-size: 10px; letter-spacing: 0.2em; color: var(--cyan); }
+.p3 h3 { font: 700 27px/1 var(--fd); margin: 4px 0 0; text-transform: uppercase; letter-spacing: 0.03em; }
+.p3 .chip { font-size: 11px; letter-spacing: 0.08em; border: 1px solid var(--orange); color: var(--orange); padding: 5px 10px; }
+.p3 .tiles { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin: 14px 0; }
+.p3 .tile { border: 1px solid var(--line); padding: 10px 12px; background: rgba(0,0,0,0.12); position: relative; }
+.p3 .tile::before { content: ""; position: absolute; left: -1px; top: -1px; width: 10px; height: 10px; border-top: 2px solid var(--cyan); border-left: 2px solid var(--cyan); }
+.p3 .tile .k { font-size: 10px; letter-spacing: 0.16em; color: var(--cyan); }
+.p3 .tile .v { font: 700 32px/1 var(--fd); margin: 4px 0; }
+.p3 .tile .v.bad { color: var(--orange); }
+.p3 .tile .d { font-size: 11px; color: rgba(233,242,251,0.7); }
+.p3 table { background: rgba(0,0,0,0.18); border: 1px solid var(--line); }
+.p3 th { font-size: 10px; letter-spacing: 0.14em; color: var(--cyan); border-bottom: 1px solid var(--line); }
+.p3 th.g { color: #fff; font: 700 13px var(--fd); letter-spacing: 0.08em; text-align: left; border-bottom: 1px solid var(--cyan); padding-top: 8px; }
+.p3 td { border-bottom: 1px solid var(--line); }
+.p3 td.bad { color: var(--orange); font-weight: 600; outline: 1px dashed var(--orange); outline-offset: -3px; }
+.p3 td.gone { color: rgba(233,242,251,0.5); text-align: center; font-style: italic; }
+.p3 .st { font-size: 10px; letter-spacing: 0.12em; color: var(--cyan); }
+.p3 .st.bad { color: var(--orange); }
+.p3 .st.miss { color: #ffd27a; }
+
+/* ---- 4 · Terminal ---- */
+.p4 { --bg: #0c0c0e; --ink: #d4d4d4; --dim: #6f6f78; --grn: #7ee787; --red: #ff7b72; --yel: #e3b341; --fm: "JetBrains Mono", Consolas, monospace; background: var(--bg); color: var(--ink); font-family: var(--fm); font-size: 12.5px; }
+.p4 .line { white-space: pre; overflow-x: auto; line-height: 1.6; }
+.p4 .dim { color: var(--dim); }
+.p4 .grn { color: var(--grn); } .p4 .red { color: var(--red); } .p4 .yel { color: var(--yel); }
+.p4 .hr { border-top: 1px solid #26262b; margin: 10px 0; }
+.p4 h3 { font: 600 16px/1.2 var(--fm); margin: 0; }
+.p4 table { font-family: var(--fm); }
+.p4 th { color: var(--dim); font-weight: 400; border-bottom: 1px solid #26262b; }
+.p4 th.g { color: var(--ink); text-align: left; padding-top: 6px; }
+.p4 td { border-bottom: 1px solid #1a1a1e; }
+.p4 td.bad { color: var(--red); font-weight: 600; }
+.p4 td.gone { color: var(--dim); text-align: center; }
+.p4 .st { font-size: 11px; }
+</style>
+
+<div class="wrap">
+  <h1>Four directions for Survey Compare</h1>
+  <p class="intro">Same slice of the app in each: the masthead with the verdict, the DD tile, and five stations including the 9596 mismatch and a station the DD file does not have.</p>
+
+  <div class="grid">
+    <section class="opt">
+      <h2><span class="n">01</span> Instrument panel <span class="rec">recommended</span></h2>
+      <p>Graphite panels, amber readout figures, indicator lamps for status, a faint scan-line texture. Light mode would be the paper report below.</p>
+      <div class="frame"><div class="mock p1">
+        <div class="mast">
+          <div><div class="eyebrow">SURVEY QC · MD / INC / AZM</div><h3>EXAMPLE STATE 14-22-1 3H</h3></div>
+          <div class="lamp"><i></i>1 MISMATCH · 23 GAPS</div>
+        </div>
+        <div class="tiles">
+          <div class="tile"><div class="k">DD vs MWD</div><div class="v">24</div><div class="d"><b>107</b> matched · <b>1</b> INC · <b>0</b> AZM · <b>23</b> missing</div></div>
+          <div class="tile"><div class="k">CORRECTIONS vs MWD</div><div class="v ok">0</div><div class="d"><b>130</b> matched · all agree</div></div>
+        </div>
+        <table class="mono">
+          <tr><th class="l">MD</th><th class="g" colspan="2">MWD · REF</th><th class="g" colspan="2">DD</th><th class="g" colspan="2">CORR</th><th class="l">STATUS</th></tr>
+          <tr><th></th><th>INC</th><th>AZM</th><th>INC</th><th>AZM</th><th>INC</th><th>AZM</th><th></th></tr>
+          <tr><td class="l">9502</td><td>36.38</td><td>110.50</td><td>36.38</td><td>110.50</td><td>36.38</td><td>110.50</td><td class="l"><span class="st"><i></i>MATCH</span></td></tr>
+          <tr><td class="l">9596</td><td>34.76</td><td>110.67</td><td class="bad">34.77</td><td>110.67</td><td>34.76</td><td>110.67</td><td class="l"><span class="st bad"><i></i>MISMATCH</span></td></tr>
+          <tr><td class="l">9639</td><td>34.48</td><td>111.00</td><td>34.48</td><td>111.00</td><td>34.48</td><td>111.00</td><td class="l"><span class="st"><i></i>MATCH</span></td></tr>
+          <tr><td class="l">9658</td><td>34.48</td><td>110.62</td><td class="gone" colspan="2">not in DD</td><td>34.48</td><td>110.62</td><td class="l"><span class="st miss"><i></i>MISSING</span></td></tr>
+          <tr><td class="l">9690</td><td>34.16</td><td>110.25</td><td class="gone" colspan="2">not in DD</td><td>34.16</td><td>110.25</td><td class="l"><span class="st miss"><i></i>MISSING</span></td></tr>
+        </table>
+      </div></div>
+    </section>
+
+    <section class="opt">
+      <h2><span class="n">02</span> Printed survey report</h2>
+      <p>Paper and ink, condensed headings, typewriter figures, red pencil on the discrepancies, a stamp for the verdict. Best for screenshots and PDFs.</p>
+      <div class="frame"><div class="mock p2">
+        <div class="mast">
+          <div><div class="eyebrow">Survey comparison · MD / INC / AZM</div><h3>Example State 14-22-1 3H</h3><div class="sub">DD and Corrections checked against MWD · 23 Oct 2026</div></div>
+          <div class="stamp">Discrepancy</div>
+        </div>
+        <div class="tiles">
+          <div class="tile"><div class="k">DD vs MWD</div><div class="v bad">24 issues</div><div>107 matched · 1 INC · 0 AZM · 23 missing</div></div>
+          <div class="tile"><div class="k">Corrections vs MWD</div><div class="v">0 issues</div><div>130 matched</div></div>
+        </div>
+        <table class="mono">
+          <tr><th class="l">MD</th><th class="g" colspan="2">MWD (ref)</th><th class="g" colspan="2">DD</th><th class="g" colspan="2">Corrections</th><th class="l">Status</th></tr>
+          <tr><th></th><th>INC</th><th>AZM</th><th>INC</th><th>AZM</th><th>INC</th><th>AZM</th><th></th></tr>
+          <tr><td class="l">9502</td><td>36.38</td><td>110.50</td><td>36.38</td><td>110.50</td><td>36.38</td><td>110.50</td><td class="l"><span class="st">Match</span></td></tr>
+          <tr><td class="l">9596</td><td>34.76</td><td>110.67</td><td class="bad">34.77</td><td>110.67</td><td>34.76</td><td>110.67</td><td class="l"><span class="st bad">Mismatch</span></td></tr>
+          <tr><td class="l">9639</td><td>34.48</td><td>111.00</td><td>34.48</td><td>111.00</td><td>34.48</td><td>111.00</td><td class="l"><span class="st">Match</span></td></tr>
+          <tr><td class="l">9658</td><td>34.48</td><td>110.62</td><td class="gone" colspan="2">— — —</td><td>34.48</td><td>110.62</td><td class="l"><span class="st miss">Missing</span></td></tr>
+          <tr><td class="l">9690</td><td>34.16</td><td>110.25</td><td class="gone" colspan="2">— — —</td><td>34.16</td><td>110.25</td><td class="l"><span class="st miss">Missing</span></td></tr>
+        </table>
+      </div></div>
+    </section>
+
+    <section class="opt">
+      <h2><span class="n">03</span> Blueprint</h2>
+      <p>Prussian blue with a dotted drafting grid, cyan linework and corner marks, signal orange for anything wrong. Striking, best kept as the dark option.</p>
+      <div class="frame"><div class="mock p3">
+        <div class="mast">
+          <div><div class="eyebrow">SURVEY QC · MD / INC / AZM</div><h3>Example State 14-22-1 3H</h3></div>
+          <div class="chip">1 MISMATCH · 23 GAPS</div>
+        </div>
+        <div class="tiles">
+          <div class="tile"><div class="k">DD vs MWD</div><div class="v bad">24</div><div class="d">107 matched · 1 INC · 0 AZM · 23 missing</div></div>
+          <div class="tile"><div class="k">CORRECTIONS vs MWD</div><div class="v">0</div><div class="d">130 matched · all agree</div></div>
+        </div>
+        <table class="mono">
+          <tr><th class="l">MD</th><th class="g" colspan="2">MWD · REF</th><th class="g" colspan="2">DD</th><th class="g" colspan="2">CORRECTIONS</th><th class="l">STATUS</th></tr>
+          <tr><th></th><th>INC</th><th>AZM</th><th>INC</th><th>AZM</th><th>INC</th><th>AZM</th><th></th></tr>
+          <tr><td class="l">9502</td><td>36.38</td><td>110.50</td><td>36.38</td><td>110.50</td><td>36.38</td><td>110.50</td><td class="l"><span class="st">MATCH</span></td></tr>
+          <tr><td class="l">9596</td><td>34.76</td><td>110.67</td><td class="bad">34.77</td><td>110.67</td><td>34.76</td><td>110.67</td><td class="l"><span class="st bad">MISMATCH</span></td></tr>
+          <tr><td class="l">9639</td><td>34.48</td><td>111.00</td><td>34.48</td><td>111.00</td><td>34.48</td><td>111.00</td><td class="l"><span class="st">MATCH</span></td></tr>
+          <tr><td class="l">9658</td><td>34.48</td><td>110.62</td><td class="gone" colspan="2">not in DD</td><td>34.48</td><td>110.62</td><td class="l"><span class="st miss">MISSING</span></td></tr>
+          <tr><td class="l">9690</td><td>34.16</td><td>110.25</td><td class="gone" colspan="2">not in DD</td><td>34.16</td><td>110.25</td><td class="l"><span class="st miss">MISSING</span></td></tr>
+        </table>
+      </div></div>
+    </section>
+
+    <section class="opt">
+      <h2><span class="n">04</span> Terminal</h2>
+      <p>One mono face for everything, no cards, bracketed status tags. Fastest to scan and the least decorated.</p>
+      <div class="frame"><div class="mock p4">
+        <div class="line"><span class="dim">survey-compare</span> › <span class="dim">well:</span> EXAMPLE STATE 14-22-1 3H</div>
+        <div class="line"><span class="dim">ref:</span> MWD   <span class="dim">vs:</span> DD, CORRECTIONS   <span class="dim">rule:</span> exact MD · any INC/AZM diff</div>
+        <div class="hr"></div>
+        <div class="line"><span class="red">[FAIL]</span> DD           24 issues   107 matched  <span class="red">1 INC</span>  0 AZM  <span class="yel">23 missing</span></div>
+        <div class="line"><span class="grn">[ OK ]</span> CORRECTIONS   0 issues   130 matched  0 INC  0 AZM  0 missing</div>
+        <div class="hr"></div>
+        <table class="mono">
+          <tr><th class="l">MD</th><th class="g" colspan="2">MWD*</th><th class="g" colspan="2">DD</th><th class="g" colspan="2">CORR</th><th class="l"></th></tr>
+          <tr><th></th><th>INC</th><th>AZM</th><th>INC</th><th>AZM</th><th>INC</th><th>AZM</th><th></th></tr>
+          <tr><td class="l">9502</td><td>36.38</td><td>110.50</td><td>36.38</td><td>110.50</td><td>36.38</td><td>110.50</td><td class="l"><span class="st grn">[ OK ]</span></td></tr>
+          <tr><td class="l">9596</td><td>34.76</td><td>110.67</td><td class="bad">34.77</td><td>110.67</td><td>34.76</td><td>110.67</td><td class="l"><span class="st red">[DIFF]</span></td></tr>
+          <tr><td class="l">9639</td><td>34.48</td><td>111.00</td><td>34.48</td><td>111.00</td><td>34.48</td><td>111.00</td><td class="l"><span class="st grn">[ OK ]</span></td></tr>
+          <tr><td class="l">9658</td><td>34.48</td><td>110.62</td><td class="gone" colspan="2">--</td><td>34.48</td><td>110.62</td><td class="l"><span class="st yel">[MISS]</span></td></tr>
+          <tr><td class="l">9690</td><td>34.16</td><td>110.25</td><td class="gone" colspan="2">--</td><td>34.16</td><td>110.25</td><td class="l"><span class="st yel">[MISS]</span></td></tr>
+        </table>
+      </div></div>
+    </section>
+  </div>
+</div>

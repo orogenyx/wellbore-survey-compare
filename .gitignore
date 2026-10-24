@@ -1,0 +1,9 @@
+﻿# dist is committed on purpose so the offline file travels with the repo
+Thumbs.db
+.DS_Store
+.claude/
+# the exported chat transcript is 6 MB and private; keep it local unless you want it in the repo
+transcript/
+# private working notes: kept locally, not published
+HANDOVER.md
+SETUP-GITHUB.md

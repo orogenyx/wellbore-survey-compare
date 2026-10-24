@@ -1,0 +1,669 @@
+<title>Survey Compare</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@600;700&family=JetBrains+Mono:wght@400;500;600&family=Archivo+Narrow:wght@600;700&family=Courier+Prime:wght@400;700&family=IBM+Plex+Sans:wght@400;500;600&display=swap">
+<style>
+/* Layout: masthead, three source cards, per-source tiles, station table.
+   Light is a printed survey report (paper, rules, typewriter figures, red pencil).
+   Dark is a rig-floor instrument panel (graphite seams, amber readouts, status lamps).
+   Every difference between the two is a token below; no component rule knows which it is in. */
+:root {
+  --bg: #ece9e0;
+  --surface: #fbfaf5;
+  --surface-2: #f4f2ea;
+  --surface-3: #ebe8de;
+  --ink: #1a1a1a;
+  --ink-2: #48453f;
+  --muted: #6f6b62;
+  --line: #d8d3c5;
+  --line-2: #aea89a;
+  --accent: #1a1a1a;
+  --accent-soft: rgba(26,26,26,0.08);
+  --ok: #2d6b3c;
+  --ok-soft: rgba(45,107,60,0.10);
+  --bad: #c4261d;
+  --bad-soft: rgba(196,38,29,0.08);
+  --miss: #8a6400;
+  --miss-soft: rgba(138,100,0,0.10);
+  --fig: #1a1a1a;
+  --fig-glow: none;
+  --hot: #8a6400;
+  --s-mwd: #1a1a1a;
+  --s-dd: #1f5fa8;
+  --s-cp: #b8651a;
+  --radius: 3px;
+  --seam: 1px;
+  --shadow: 0 1px 0 rgba(0,0,0,0.04), 0 10px 24px -14px rgba(40,30,10,0.35);
+  --scan: 0;
+  --lamp: 0px;
+  --stamp-rotate: -3deg;
+  --stamp-border: 2.5px;
+  --gone-bg: transparent;
+  --flag-ring: inset 0 0 0 1px transparent;
+  --flag-underline: underline wavy var(--bad);
+  --f-display: "Archivo Narrow", "Arial Narrow", system-ui, sans-serif;
+  --f-body: "IBM Plex Sans", system-ui, -apple-system, "Segoe UI", sans-serif;
+  --f-mono: "Courier Prime", "Courier New", monospace;
+  --fig-size: 14px;
+  --track: 0.02em;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #0a0d10; --surface: #0f1316; --surface-2: #151b20; --surface-3: #1c2329; --ink: #d9e0e6; --ink-2: #a7b1ba; --muted: #76838e;
+    --line: #262e36; --line-2: #3a444e; --accent: #ffb424; --accent-soft: rgba(255,180,36,0.12);
+    --ok: #37d67a; --ok-soft: rgba(55,214,122,0.12); --bad: #ff4f3a; --bad-soft: rgba(255,79,58,0.20); --miss: #ffb424; --miss-soft: rgba(255,180,36,0.10);
+    --fig: #ffb424; --fig-glow: 0 0 10px rgba(255,180,36,0.35); --hot: #ffb424; --s-mwd: #ffffff; --s-dd: #5aa2ff; --s-cp: #ff8a3c;
+    --radius: 0px; --seam: 1px; --shadow: none; --scan: 0; --lamp: 8px; --stamp-rotate: 0deg; --stamp-border: 1px;
+    --gone-bg: repeating-linear-gradient(135deg, transparent 0 6px, rgba(255,255,255,0.045) 6px 7px);
+    --flag-ring: inset 0 0 0 1px var(--bad); --flag-underline: none;
+    --f-display: "Barlow Condensed", "Arial Narrow", system-ui, sans-serif; --f-body: "JetBrains Mono", Consolas, monospace; --f-mono: "JetBrains Mono", Consolas, monospace;
+    --fig-size: 13px; --track: 0.08em;
+    color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #0a0d10; --surface: #0f1316; --surface-2: #151b20; --surface-3: #1c2329; --ink: #d9e0e6; --ink-2: #a7b1ba; --muted: #76838e;
+  --line: #262e36; --line-2: #3a444e; --accent: #ffb424; --accent-soft: rgba(255,180,36,0.12);
+  --ok: #37d67a; --ok-soft: rgba(55,214,122,0.12); --bad: #ff4f3a; --bad-soft: rgba(255,79,58,0.20); --miss: #ffb424; --miss-soft: rgba(255,180,36,0.10);
+  --fig: #ffb424; --fig-glow: 0 0 10px rgba(255,180,36,0.35); --hot: #ffb424; --s-mwd: #ffffff; --s-dd: #5aa2ff; --s-cp: #ff8a3c;
+  --radius: 0px; --seam: 1px; --shadow: none; --scan: 0; --lamp: 8px; --stamp-rotate: 0deg; --stamp-border: 1px;
+  --gone-bg: repeating-linear-gradient(135deg, transparent 0 6px, rgba(255,255,255,0.045) 6px 7px);
+  --flag-ring: inset 0 0 0 1px var(--bad); --flag-underline: none;
+  --f-display: "Barlow Condensed", "Arial Narrow", system-ui, sans-serif; --f-body: "JetBrains Mono", Consolas, monospace; --f-mono: "JetBrains Mono", Consolas, monospace;
+  --fig-size: 13px; --track: 0.08em;
+  color-scheme: dark;
+}
+
+* { box-sizing: border-box; }
+body { margin: 0; background: var(--bg); color: var(--ink); font: 13.5px/1.5 var(--f-body); -webkit-font-smoothing: antialiased; }
+body::after { content: ""; position: fixed; inset: 0; pointer-events: none; z-index: 50; opacity: var(--scan); background: repeating-linear-gradient(0deg, #fff 0 1px, transparent 1px 3px); }
+.app { max-width: 1240px; margin: 0 auto; padding-block: 28px 48px; padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); display: grid; gap: 20px; }
+h1, h2, h3 { font-family: var(--f-display); margin: 0; text-wrap: balance; }
+button, select, input { font: inherit; color: inherit; }
+button { cursor: pointer; }
+:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+.num { font-family: var(--f-mono); font-variant-numeric: tabular-nums; }
+.eyebrow { font-size: 10.5px; letter-spacing: 0.18em; text-transform: uppercase; color: var(--muted); font-weight: 600; }
+
+/* buttons */
+.btn { display: inline-flex; align-items: center; gap: 6px; height: 32px; padding: 0 12px; border: 1px solid var(--line-2); border-radius: var(--radius); background: var(--surface); color: var(--ink); font-weight: 600; font-size: 11.5px; letter-spacing: var(--track); text-transform: uppercase; transition: border-color .12s, background .12s; }
+.btn:hover { border-color: var(--accent); background: var(--surface-2); }
+.btn.quiet { border-color: transparent; background: transparent; color: var(--ink-2); }
+.btn.quiet:hover { background: var(--surface-3); color: var(--ink); }
+.btn svg { width: 14px; height: 14px; }
+
+/* masthead */
+.masthead { display: flex; flex-wrap: wrap; align-items: flex-end; justify-content: space-between; gap: 14px 32px; padding-bottom: 18px; border-bottom: 2px solid var(--ink); }
+.masthead h1 { font-size: 38px; font-weight: 700; line-height: 1; margin-top: 6px; text-transform: uppercase; letter-spacing: 0.01em; }
+.masthead .lede { margin: 8px 0 0; color: var(--ink-2); max-width: 64ch; font-size: 13px; }
+.masthead .lede b { color: var(--ink); font-weight: 600; }
+.masthead-side { display: flex; flex-direction: column; align-items: flex-end; gap: 12px; }
+.verdict { display: inline-flex; align-items: center; gap: 9px; padding: 8px 13px; border-radius: var(--radius); font-family: var(--f-display); font-weight: 700; font-size: 15px; letter-spacing: 0.1em; text-transform: uppercase; border: var(--stamp-border) solid var(--line-2); background: var(--surface); color: var(--muted); transform: rotate(var(--stamp-rotate)); }
+.verdict::before { content: ""; width: var(--lamp); height: var(--lamp); border-radius: 50%; background: var(--muted); flex: none; display: block; }
+.verdict:not(.ok):not(.bad):not(.miss)::before { display: none; }
+.verdict.ok { color: var(--ok); border-color: var(--ok); }
+.verdict.ok::before { background: var(--ok); box-shadow: 0 0 8px var(--ok); }
+.verdict.bad { color: var(--bad); border-color: var(--bad); }
+.verdict.bad::before { background: var(--bad); box-shadow: 0 0 8px var(--bad); }
+.verdict.miss { color: var(--miss); border-color: var(--miss); }
+.verdict.miss::before { background: var(--miss); box-shadow: 0 0 8px var(--miss); }
+.actions { display: flex; gap: 8px; flex-wrap: wrap; justify-content: flex-end; }
+
+/* source cards */
+.sources { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 16px; }
+.src { background: var(--surface); border: var(--seam) solid var(--line); border-radius: var(--radius); box-shadow: var(--shadow); min-width: 0; display: flex; flex-direction: column; }
+.src-head { display: flex; align-items: center; gap: 10px; padding: 13px 16px 11px; border-bottom: 1px solid var(--line); }
+.src-head .dot { width: 10px; height: 10px; border-radius: var(--radius); flex: none; background: var(--c); }
+.src-head h2 { font-size: 21px; font-weight: 700; line-height: 1; text-transform: uppercase; letter-spacing: 0.02em; }
+.src-head .role { display: block; font-size: 11px; color: var(--muted); margin-top: 3px; letter-spacing: var(--track); }
+.src-head .chip { margin-left: auto; font-size: 10px; font-weight: 600; letter-spacing: 0.1em; text-transform: uppercase; padding: 3px 8px; border-radius: var(--radius); background: var(--surface-3); color: var(--muted); white-space: nowrap; }
+.src-head .chip.ref { background: var(--accent-soft); color: var(--accent); }
+.drop { position: relative; margin: 14px 16px 0; border: 1.5px dashed var(--line-2); border-radius: var(--radius); padding: 16px 14px; display: flex; align-items: center; gap: 12px; color: var(--ink-2); cursor: pointer; transition: border-color .12s, background .12s; min-height: 72px; }
+.drop:hover, .drop.over { border-color: var(--accent); background: var(--accent-soft); }
+.drop input { position: absolute; inset: 0; opacity: 0; cursor: pointer; width: 100%; }
+.drop .ico { width: 36px; height: 36px; flex: none; display: grid; place-items: center; border-radius: var(--radius); background: var(--surface-3); color: var(--muted); }
+.drop .ico svg { width: 18px; height: 18px; }
+.drop .t { min-width: 0; }
+.drop .t > b { display: block; color: var(--ink); font-weight: 600; }
+.drop .t small { color: var(--muted); font-size: 11.5px; }
+.src.loaded .drop { border-style: solid; border-color: var(--line); background: var(--surface-2); padding: 11px 12px 11px 14px; }
+.src.loaded .drop .ico { font-family: var(--f-mono); font-size: 10px; font-weight: 700; letter-spacing: 0.06em; background: var(--surface); border: 1px solid var(--line-2); color: var(--ink-2); }
+.src.loaded .drop .fname { font-weight: 600; color: var(--ink); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.src.loaded .drop .fsub { font-size: 11.5px; color: var(--muted); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.src.loaded .drop .fsub b { color: var(--ink-2); font-weight: 500; }
+.iconbtn { position: relative; z-index: 1; flex: none; width: 28px; height: 28px; border-radius: var(--radius); border: 0; background: transparent; color: var(--muted); display: grid; place-items: center; margin-left: auto; }
+.iconbtn:hover { background: var(--surface-3); color: var(--ink); }
+.iconbtn svg { width: 14px; height: 14px; }
+.stats { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); margin: 14px 16px 0; border-top: 1px solid var(--line); padding-top: 12px; }
+.stats div { min-width: 0; }
+.stats .k { font-size: 10px; letter-spacing: 0.14em; text-transform: uppercase; color: var(--muted); font-weight: 600; }
+.stats .v { font-family: var(--f-mono); font-size: 16px; color: var(--fig); text-shadow: var(--fig-glow); font-weight: 600; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.map { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px; padding: 12px 16px 16px; margin-top: auto; }
+.map label { display: flex; flex-direction: column; gap: 4px; font-size: 10px; color: var(--muted); font-weight: 600; letter-spacing: 0.14em; text-transform: uppercase; min-width: 0; }
+.map select { width: 100%; min-width: 0; height: 32px; border: 1px solid var(--line-2); background: var(--surface); border-radius: var(--radius); padding: 0 8px; font-size: 12.5px; text-overflow: ellipsis; font-weight: 400; letter-spacing: 0; text-transform: none; color: var(--ink); }
+.map select:hover { border-color: var(--accent); }
+.note { margin: 12px 16px 0; font-size: 12.5px; padding: 8px 11px; border-radius: var(--radius); background: var(--surface-3); color: var(--ink-2); line-height: 1.4; }
+.note.err { background: var(--bad-soft); color: var(--bad); }
+.note.warn { background: var(--miss-soft); color: var(--miss); }
+.src:not(.loaded) .map, .src:not(.loaded) .stats { display: none; }
+.src:not(.loaded) { padding-bottom: 16px; }
+
+/* tiles */
+.tiles { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 16px; }
+.tile { background: var(--surface); border: var(--seam) solid var(--line); border-radius: var(--radius); box-shadow: var(--shadow); padding: 16px 18px; min-width: 0; display: grid; gap: 10px; }
+.tile .label { display: flex; align-items: center; gap: 8px; font-size: 11px; color: var(--muted); font-weight: 600; letter-spacing: 0.14em; text-transform: uppercase; }
+.tile .label .dot { width: 10px; height: 10px; border-radius: var(--radius); background: var(--c); }
+.tile .label .vs { color: var(--muted); font-weight: 600; }
+.tile .value { font-family: var(--f-display); font-size: 44px; font-weight: 700; line-height: 1; display: flex; align-items: baseline; gap: 8px; color: var(--fig); text-shadow: var(--fig-glow); }
+.tile .value small { font-family: var(--f-body); font-size: 11px; color: var(--muted); font-weight: 600; letter-spacing: 0.12em; text-transform: uppercase; }
+.tile.ok .value { color: var(--ok); text-shadow: 0 0 10px color-mix(in srgb, var(--ok) 40%, transparent); }
+.tile.bad .value { color: var(--bad); text-shadow: 0 0 10px color-mix(in srgb, var(--bad) 40%, transparent); }
+.tile.miss .value { color: var(--miss); text-shadow: 0 0 10px color-mix(in srgb, var(--miss) 40%, transparent); }
+.tile .breakdown { display: flex; flex-wrap: wrap; gap: 6px; }
+.kv { display: inline-flex; align-items: baseline; gap: 5px; padding: 3px 9px; border-radius: var(--radius); border: 1px solid var(--line); background: var(--surface-2); font-size: 11px; color: var(--ink-2); letter-spacing: var(--track); text-transform: uppercase; }
+.kv b { font-family: var(--f-mono); font-weight: 700; color: var(--ink); }
+.kv.bad { border-color: var(--bad); background: var(--bad-soft); color: var(--bad); } .kv.bad b { color: var(--bad); }
+.kv.miss { border-color: var(--miss); background: var(--miss-soft); color: var(--miss); } .kv.miss b { color: var(--miss); }
+.tile.empty { color: var(--ink-2); }
+.tile.empty .value { font-family: var(--f-body); font-size: 15px; color: var(--ink); text-shadow: none; text-transform: none; letter-spacing: 0; font-weight: 500; }
+
+/* table panel */
+.panel { background: var(--surface); border: var(--seam) solid var(--line); border-radius: var(--radius); box-shadow: var(--shadow); overflow: hidden; }
+.toolbar { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 10px 16px; padding: 12px 16px; border-bottom: 1px solid var(--line); }
+.toolbar h2 { font-size: 21px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.02em; }
+.toolbar .count { color: var(--muted); font-size: 11.5px; margin-left: 12px; letter-spacing: var(--track); text-transform: uppercase; }
+.toolbar-right { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+.seg { display: inline-flex; padding: 3px; background: var(--surface-3); border-radius: var(--radius); gap: 2px; border: 1px solid var(--line); }
+.seg button { height: 26px; padding: 0 12px; border: 0; border-radius: var(--radius); background: transparent; color: var(--ink-2); font-size: 11.5px; font-weight: 600; letter-spacing: var(--track); text-transform: uppercase; }
+.seg button.on { background: var(--surface); color: var(--ink); box-shadow: 0 0 0 1px var(--line-2); }
+.seg button:hover:not(.on) { color: var(--ink); }
+.tscroll { overflow: auto; max-height: 75vh; }
+table { border-collapse: separate; border-spacing: 0; width: 100%; min-width: 640px; font-size: var(--fig-size); }
+thead th { position: sticky; background: var(--surface); font-weight: 600; text-align: right; padding: 0 12px; white-space: nowrap; z-index: 1; }
+thead tr.grp th { top: 0; height: 40px; vertical-align: bottom; padding-bottom: 7px; font-family: var(--f-display); font-size: 15px; letter-spacing: 0.06em; text-transform: uppercase; color: var(--ink); text-align: left; }
+thead tr.grp th.gsrc { border-bottom: 2px solid var(--c); }
+thead tr.grp th.gsrc .lbl { display: inline-flex; align-items: center; gap: 7px; }
+thead tr.grp th.gsrc .lbl i { width: 9px; height: 9px; border-radius: var(--radius); background: var(--c); }
+thead tr.grp th.gsrc .tag { font-family: var(--f-body); font-size: 9.5px; font-weight: 700; letter-spacing: 0.1em; color: var(--accent); background: var(--accent-soft); padding: 1px 6px; border-radius: var(--radius); margin-left: 6px; }
+thead tr.sub th { top: 40px; height: 28px; font-size: 10px; letter-spacing: 0.14em; text-transform: uppercase; color: var(--muted); background: var(--surface-2); border-bottom: 1px solid var(--line-2); }
+thead th.l, td.l { text-align: left; }
+thead th.sep, td.sep { border-left: 1px solid var(--line); }
+tbody td { padding: 0 12px; height: 32px; text-align: right; border-bottom: 1px solid var(--line); white-space: nowrap; color: var(--ink); }
+tbody td.hot { color: var(--hot); }
+tbody tr.target td { background: var(--accent-soft); box-shadow: inset 0 2px 0 var(--accent), inset 0 -2px 0 var(--accent); }
+tbody tr.issue td.flag, tbody tr.target td.flag { color: var(--bad); background: var(--bad-soft); }
+tbody tr.target td.flag { box-shadow: inset 0 2px 0 var(--bad), inset 0 -2px 0 var(--bad), var(--flag-ring); }
+tbody tr:last-child td { border-bottom: 0; }
+tbody tr:hover td { background: var(--surface-2); }
+tbody td.md { font-weight: 700; color: var(--ink); }
+tbody tr.issue td.md { color: var(--hot); }
+td.flag { color: var(--bad); font-weight: 700; background: var(--bad-soft); box-shadow: var(--flag-ring); text-decoration: var(--flag-underline); text-underline-offset: 3px; }
+td.gone { color: var(--muted); background: var(--gone-bg); text-align: center; font-size: 11.5px; font-style: italic; letter-spacing: var(--track); }
+.st { display: inline-flex; align-items: center; gap: 7px; font-size: 10.5px; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; color: var(--ink-2); }
+.st::before { content: ""; width: 7px; height: 7px; border-radius: 50%; background: var(--muted); }
+.st.ok { color: var(--ok); } .st.ok::before { background: var(--ok); box-shadow: 0 0 6px var(--ok); }
+.st.mismatch { color: var(--bad); } .st.mismatch::before { background: var(--bad); box-shadow: 0 0 6px var(--bad); }
+.st.missing { color: var(--miss); } .st.missing::before { background: var(--miss); box-shadow: 0 0 6px var(--miss); }
+.emptyrow td { text-align: center; color: var(--muted); height: 90px; font-family: var(--f-body); }
+
+.toast { position: fixed; left: 50%; bottom: calc(20px + env(safe-area-inset-bottom, 0px)); transform: translateX(-50%) translateY(6px); background: var(--ink); color: var(--bg); padding: 9px 15px; border-radius: var(--radius); font-size: 12.5px; font-weight: 600; opacity: 0; transition: opacity .15s, transform .15s; pointer-events: none; z-index: 60; }
+.toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+
+@media (max-width: 980px) { .sources { grid-template-columns: 1fr; } .masthead h1 { font-size: 30px; } .masthead-side { align-items: flex-start; } .actions { justify-content: flex-start; } .verdict { transform: none; } }
+@media (prefers-reduced-motion: reduce) { * { transition: none !important; } }
+</style>
+
+<div class="app">
+  <header class="masthead">
+    <div class="masthead-main">
+      <div class="eyebrow">Survey QC · MD / INC / AZM</div>
+      <h1 id="wellName">Survey Compare</h1>
+      <p class="lede" id="subtitle">Drop the MWD, DD and correction-provider survey files. Stations pair on an identical MD, and any difference in inclination or azimuth is flagged.</p>
+    </div>
+    <div class="masthead-side">
+      <div class="verdict" id="verdict">Waiting for files</div>
+      <div class="actions">
+        <button class="btn" id="btnFirst" type="button"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M8 2.5v10M3.5 8.5 8 13l4.5-4.5"/></svg>First issue</button>
+        <button class="btn" id="btnNext" type="button" hidden><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M8 2.5v10M3.5 8.5 8 13l4.5-4.5"/></svg>Next issue</button>
+        <button class="btn" id="btnClear" type="button">Clear all</button>
+      </div>
+    </div>
+  </header>
+
+  <section class="sources" id="sources"></section>
+
+  <section class="tiles" id="tiles"></section>
+
+  <section class="panel">
+    <div class="toolbar">
+      <div><h2 style="display:inline">Stations</h2><span class="count" id="rowCount"></span></div>
+      <div class="toolbar-right">
+        <div class="seg" role="group" aria-label="Row filter">
+          <button type="button" id="segAll" class="on">All</button>
+          <button type="button" id="segIssues">Issues only</button>
+        </div>
+        <button class="btn" id="btnCopy" type="button"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="5" y="5" width="8.5" height="8.5" rx="1.5"/><path d="M11 5V3.5A1.5 1.5 0 0 0 9.5 2h-6A1.5 1.5 0 0 0 2 3.5v6A1.5 1.5 0 0 0 3.5 11H5"/></svg>Copy CSV</button>
+      </div>
+    </div>
+    <div class="tscroll"><table id="table"></table></div>
+  </section>
+
+</div>
+<div class="toast" id="toast"></div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+<script>
+(function () {
+  'use strict';
+  const SRC = [
+    { key: 'mwd', label: 'MWD', role: 'Our surveys', color: 'var(--s-mwd)' },
+    { key: 'dd',  label: 'DD',  role: 'Directional driller', color: 'var(--s-dd)' },
+    { key: 'cp',  label: 'Corrections', role: 'Correction provider', color: 'var(--s-cp)' },
+  ];
+  const ROLES = ['md', 'inc', 'azm'];
+  const ROLE_LABEL = { md: 'MD', inc: 'INC', azm: 'AZM' };
+  const state = { files: {}, onlyIssues: false };
+  const EPS = 1e-9; // float noise only; MD must be identical and any INC/AZM difference is a flag
+  let lastRows = [], lastLoaded = [], lastRef = null;
+
+  try {
+    const saved = JSON.parse(localStorage.getItem('sc.settings') || 'null');
+    if (saved) state.onlyIssues = !!saved.onlyIssues;
+  } catch (e) { /* storage unavailable */ }
+
+  const $ = (id) => document.getElementById(id);
+  const esc = (s) => String(s).replace(/[&<>"]/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
+  const fmt = (v, d = 2) => (v == null || !Number.isFinite(v)) ? '' : v.toFixed(d);
+  const fmtD = (v, d = 2) => (v == null || !Number.isFinite(v)) ? '' : (v > 0 ? '+' : v < 0 ? '−' : '') + Math.abs(v).toFixed(d);
+  const wrapAz = (d) => ((d + 540) % 360) - 180;
+  const plural = (n, w) => `${n} ${w}${n === 1 ? '' : 's'}`;
+  const ICON_X = '<svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M4 4l8 8M12 4l-8 8"/></svg>';
+  const ICON_UP = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M12 16V5M7 10l5-5 5 5"/><path d="M4 17v2a1 1 0 0 0 1 1h14a1 1 0 0 0 1-1v-2"/></svg>';
+
+  // ---------- parsing ----------
+  function num(v) {
+    if (typeof v === 'number') return Number.isFinite(v) ? v : null;
+    if (v == null) return null;
+    const s = String(v).trim().replace(/,/g, '');
+    if (!/^[-+]?(\d+\.?\d*|\.\d+)([eE][-+]?\d+)?$/.test(s)) return null;
+    return parseFloat(s);
+  }
+  function norm(s) {
+    return String(s == null ? '' : s).toLowerCase().replace(/\(.*?\)/g, ' ').replace(/[°º]/g, '').replace(/[\s_\-.:]+/g, ' ').trim();
+  }
+  const PAT = {
+    md:  /^(md|m d|measured depth|meas depth|measured dep|survey depth|depth|survey md|station depth)\b/,
+    inc: /^((true|corrected|corr|survey|final)\s+)?(inc|incl|inclination|inclin)\b/,
+    azm: /^((true|grid|mag|magnetic|corrected|corr|survey|final)\s+)?(az|azm|azi|azimuth|azim)\b/,
+  };
+  const REJECT = /\b(plan|planned|proposed|closure|target|dogleg|dls|tvd|true vertical|vertical|delta|diff|interp|tool ?face|tf|conv)\b/;
+  function classify(h) {
+    const n = norm(h);
+    if (!n || REJECT.test(n)) return null;
+    for (const r of ROLES) if (PAT[r].test(n)) return r;
+    return null;
+  }
+  function colName(i) { let s = ''; i += 1; while (i > 0) { const m = (i - 1) % 26; s = String.fromCharCode(65 + m) + s; i = Math.floor((i - 1) / 26); } return s; }
+
+  function detectHeader(aoa) {
+    const limit = Math.min(aoa.length, 150);
+    for (let r = 0; r < limit; r++) {
+      const row = aoa[r] || [];
+      const found = {};
+      row.forEach((cell, c) => {
+        if (typeof cell === 'number') return;
+        const role = classify(cell);
+        if (role && found[role] == null) found[role] = c;
+      });
+      if (found.md != null && found.inc != null && found.azm != null) return { row: r, map: found, auto: true };
+    }
+    for (let r = 0; r < limit; r++) {
+      const row = aoa[r] || [];
+      const idx = [];
+      row.forEach((cell, c) => { if (num(cell) != null) idx.push(c); });
+      if (idx.length >= 3) return { row: r - 1, map: { md: idx[0], inc: idx[1], azm: idx[2] }, auto: false };
+    }
+    return null;
+  }
+
+  // Look above the survey table for a "Well name:" style label and take the value beside it.
+  function findWellName(aoa, headerRow) {
+    for (let r = 0; r < Math.max(0, headerRow); r++) {
+      const row = aoa[r] || [];
+      for (let c = 0; c < row.length; c++) {
+        const cell = row[c]; if (typeof cell !== 'string') continue;
+        const m = /^\s*(well\s*name|well)\s*[:=]?\s*(.*)$/i.exec(cell);
+        if (!m) continue;
+        const inline = m[2].trim();
+        if (inline) return inline;
+        for (let k = c + 1; k < row.length; k++) { const v = row[k]; if (v != null && String(v).trim()) return String(v).trim(); }
+      }
+    }
+    return null;
+  }
+
+  function extract(aoa, headerRow, map) {
+    const out = [];
+    for (let r = headerRow + 1; r < aoa.length; r++) {
+      const row = aoa[r]; if (!row) continue;
+      const md = num(row[map.md]), inc = num(row[map.inc]), azm = num(row[map.azm]);
+      if (md == null || inc == null || azm == null) continue;
+      if (inc < 0 || inc > 180 || azm < -360 || azm > 360) continue;
+      if (md === 0 && inc === 0 && azm === 0) continue; // surface tie-in: present or absent in any file, never compared
+      out.push({ md, inc, azm, row: r + 1 });
+    }
+    out.sort((a, b) => a.md - b.md);
+    return out;
+  }
+
+  function workbookFrom(buf, name) {
+    const lower = name.toLowerCase();
+    if (/\.(csv|txt|tsv|prn)$/.test(lower) || !/\.(xls|xlsx|xlsm|xlsb|xlt|xltx|ods)$/.test(lower)) {
+      const bytes = new Uint8Array(buf);
+      const isOle = bytes[0] === 0xD0 && bytes[1] === 0xCF, isZip = bytes[0] === 0x50 && bytes[1] === 0x4B;
+      if (!isOle && !isZip) {
+        let text = new TextDecoder('utf-8').decode(bytes);
+        if (text.charCodeAt(0) === 0xFEFF) text = text.slice(1);
+        return XLSX.read(text, { type: 'string' });
+      }
+    }
+    return XLSX.read(buf, { type: 'array' });
+  }
+
+  function parseBuffer(buf, name) {
+    const wb = workbookFrom(buf, name);
+    let best = null;
+    for (const sn of wb.SheetNames) {
+      const ws = wb.Sheets[sn]; if (!ws || !ws['!ref']) continue;
+      const aoa = XLSX.utils.sheet_to_json(ws, { header: 1, defval: null, raw: true });
+      const det = detectHeader(aoa);
+      if (det && (!best || (det.auto && !best.det.auto))) best = { sheet: sn, aoa, det };
+      if (best && best.det.auto) break;
+    }
+    if (!best) throw new Error('No survey table found. Expected columns for MD, INC and AZM.');
+    const headerCells = best.det.row >= 0 ? (best.aoa[best.det.row] || []) : [];
+    const width = Math.max(headerCells.length, ...best.aoa.slice(best.det.row + 1, best.det.row + 6).map((r) => (r || []).length));
+    const columns = [];
+    for (let c = 0; c < width; c++) {
+      const h = headerCells[c];
+      columns.push(h == null || h === '' ? 'Column ' + colName(c) : String(h).replace(/\s+/g, ' ').trim());
+    }
+    const ext = (name.match(/\.([a-z0-9]+)$/i) || [, 'file'])[1].toUpperCase();
+    return { name, ext, sheet: best.sheet, sheets: wb.SheetNames.length, aoa: best.aoa, headerRow: best.det.row, auto: best.det.auto, map: { ...best.det.map }, columns, well: findWellName(best.aoa, best.det.row) };
+  }
+
+  function finish(f) { f.stations = extract(f.aoa, f.headerRow, f.map); return f; }
+
+  async function loadFile(key, file) {
+    try {
+      const buf = await file.arrayBuffer();
+      state.files[key] = finish(parseBuffer(buf, file.name));
+    } catch (e) {
+      state.files[key] = { name: file.name, ext: (file.name.match(/\.([a-z0-9]+)$/i) || [, 'file'])[1].toUpperCase(), error: e.message || String(e), stations: [] };
+    }
+    renderCard(key); recompute();
+  }
+
+  // ---------- source cards ----------
+  const cardEl = (key) => document.querySelector('.src[data-src="' + key + '"]');
+  const emptyDrop = (s) => `<span class="ico">${ICON_UP}</span><div class="t"><b>Drop the ${s.label} survey file</b><small>or click to browse · CSV, XLS, XLSX</small></div>`;
+  function buildCards() {
+    $('sources').innerHTML = SRC.map((s) => `
+      <article class="src" data-src="${s.key}" style="--c:${s.color}">
+        <header class="src-head">
+          <span class="dot"></span>
+          <div><h2>${s.label}</h2><span class="role">${s.role}</span></div>
+          <span class="chip ${s.key === 'mwd' ? 'ref' : ''}" id="chip-${s.key}">${s.key === 'mwd' ? 'reference' : 'no file'}</span>
+        </header>
+        <div class="drop" id="drop-${s.key}">
+          <input type="file" id="file-${s.key}" accept=".csv,.txt,.tsv,.xls,.xlsx,.xlsm,.xlsb" aria-label="${s.label} survey file">
+          ${emptyDrop(s)}
+        </div>
+        <div id="note-${s.key}"></div>
+        <div class="stats" id="stats-${s.key}"></div>
+        <div class="map" id="map-${s.key}"></div>
+      </article>`).join('');
+    SRC.forEach((s) => {
+      const drop = $('drop-' + s.key), input = $('file-' + s.key);
+      input.addEventListener('change', () => { if (input.files[0]) loadFile(s.key, input.files[0]); input.value = ''; });
+      ['dragenter', 'dragover'].forEach((ev) => drop.addEventListener(ev, (e) => { e.preventDefault(); drop.classList.add('over'); }));
+      ['dragleave', 'drop'].forEach((ev) => drop.addEventListener(ev, (e) => { e.preventDefault(); drop.classList.remove('over'); }));
+      drop.addEventListener('drop', (e) => { const f = e.dataTransfer && e.dataTransfer.files[0]; if (f) loadFile(s.key, f); });
+    });
+  }
+
+  function renderCard(key) {
+    const s = SRC.find((x) => x.key === key), f = state.files[key], card = cardEl(key);
+    const drop = $('drop-' + key), stats = $('stats-' + key), note = $('note-' + key), map = $('map-' + key), chip = $('chip-' + key);
+    drop.querySelectorAll(':scope > :not(input)').forEach((n) => n.remove());
+    if (!f) {
+      card.classList.remove('loaded');
+      drop.insertAdjacentHTML('beforeend', emptyDrop(s));
+      stats.innerHTML = ''; note.innerHTML = ''; map.innerHTML = '';
+      chip.textContent = key === 'mwd' ? 'reference' : 'no file';
+      return;
+    }
+    card.classList.add('loaded');
+    const st = f.stations || [];
+    const sub = f.error ? `<span style="color:var(--bad)">could not be read</span>`
+      : `<b>${esc(f.sheet)}</b>${f.sheets > 1 ? ` of ${f.sheets}` : ''} · header row ${f.headerRow >= 0 ? f.headerRow + 1 : 'not found'}`;
+    drop.insertAdjacentHTML('beforeend', `<span class="ico">${esc(f.ext)}</span><div class="t"><div class="fname" title="${esc(f.name)}">${esc(f.name)}</div><div class="fsub">${sub}</div></div><button class="iconbtn" type="button" title="Remove ${s.label} file" aria-label="Remove ${s.label} file">${ICON_X}</button>`);
+    drop.querySelector('.iconbtn').addEventListener('click', (e) => { e.preventDefault(); e.stopPropagation(); delete state.files[key]; renderCard(key); recompute(); });
+    chip.textContent = key === 'mwd' ? 'reference' : (f.error ? 'error' : plural(st.length, 'station'));
+    if (f.error) {
+      stats.innerHTML = ''; map.innerHTML = '';
+      note.innerHTML = `<div class="note err">${esc(f.error)}</div>`;
+      return;
+    }
+    stats.innerHTML = `
+      <div><div class="k">Stations</div><div class="v num">${st.length}</div></div>
+      <div><div class="k">First MD</div><div class="v num">${st.length ? fmt(st[0].md, st[0].md % 1 ? 2 : 0) : '—'}</div></div>
+      <div><div class="k">Last MD</div><div class="v num">${st.length ? fmt(st[st.length - 1].md, st[st.length - 1].md % 1 ? 2 : 0) : '—'}</div></div>`;
+    note.innerHTML = f.auto ? (st.length ? '' : '<div class="note warn">Header found but no numeric survey rows under it. Check the column mapping.</div>')
+      : '<div class="note warn">Could not find MD, INC and AZM headers, so the first three numeric columns were used. Check the mapping below.</div>';
+    map.innerHTML = ROLES.map((r) => `
+      <label>${ROLE_LABEL[r]}
+        <select id="sel-${key}-${r}" data-role="${r}">${f.columns.map((c, i) => `<option value="${i}" ${f.map[r] === i ? 'selected' : ''}>${esc(c)}</option>`).join('')}</select>
+      </label>`).join('');
+    map.querySelectorAll('select').forEach((sel) => sel.addEventListener('change', () => {
+      f.map[sel.dataset.role] = parseInt(sel.value, 10); finish(f); f.auto = true; renderCard(key); recompute();
+    }));
+  }
+
+  // ---------- comparison ----------
+  function recompute() {
+    const loaded = SRC.filter((s) => state.files[s.key] && !state.files[s.key].error && state.files[s.key].stations.length);
+    const ref = loaded.find((s) => s.key === 'mwd') || loaded[0] || null;
+    const others = loaded.filter((s) => s !== ref);
+
+    const all = [];
+    loaded.forEach((s) => state.files[s.key].stations.forEach((st) => all.push({ src: s.key, ...st })));
+    all.sort((a, b) => a.md - b.md || SRC.findIndex((s) => s.key === a.src) - SRC.findIndex((s) => s.key === b.src));
+
+    const clusters = [];
+    let cur = null;
+    for (const st of all) {
+      if (!cur || st.md - cur.anchor > EPS || cur.items[st.src]) { cur = { anchor: st.md, items: {} }; clusters.push(cur); }
+      cur.items[st.src] = st;
+    }
+
+    const rows = clusters.map((c) => {
+      const r = ref ? c.items[ref.key] : null;
+      const row = { md: r ? r.md : c.anchor, items: c.items, missing: [], flags: 0, status: 'ok', deltas: {} };
+      loaded.forEach((s) => { if (!c.items[s.key]) row.missing.push(s.key); });
+      if (r) others.forEach((s) => {
+        const o = c.items[s.key]; if (!o) return;
+        const dInc = o.inc - r.inc, dAzm = wrapAz(o.azm - r.azm);
+        const fInc = Math.abs(dInc) > EPS, fAzm = Math.abs(dAzm) > EPS;
+        row.deltas[s.key] = { dInc, dAzm, fInc, fAzm };
+        row.flags += (fInc ? 1 : 0) + (fAzm ? 1 : 0);
+      });
+      row.status = row.missing.length ? 'missing' : row.flags ? 'mismatch' : 'ok';
+      return row;
+    });
+
+    lastRows = rows; lastLoaded = loaded; lastRef = ref;
+    const summary = summarize(rows, ref, others);
+    renderMasthead(loaded, ref, others, summary);
+    renderTiles(ref, others, summary, rows.length);
+    renderTable(rows, loaded, ref);
+  }
+
+  function summarize(rows, ref, others) {
+    const out = {};
+    if (!ref) return out;
+    others.forEach((s) => {
+      const c = { inc: 0, azm: 0, miss: 0, extra: 0, matched: 0 };
+      rows.forEach((r) => {
+        const d = r.deltas[s.key];
+        if (r.items[ref.key] && !r.items[s.key]) c.miss++;
+        if (!r.items[ref.key] && r.items[s.key]) c.extra++;
+        if (d) { c.matched++; if (d.fInc) c.inc++; if (d.fAzm) c.azm++; }
+      });
+      c.issues = c.inc + c.azm + c.miss + c.extra;
+      out[s.key] = c;
+    });
+    return out;
+  }
+
+  function renderMasthead(loaded, ref, others, summary) {
+    const h1 = $('wellName'), lede = $('subtitle'), v = $('verdict');
+    const well = loaded.map((s) => state.files[s.key].well).find(Boolean);
+    h1.textContent = well || 'Survey Compare';
+    v.className = 'verdict';
+    if (!loaded.length) {
+      lede.innerHTML = 'Drop the MWD, DD and correction-provider survey files. Stations pair on an identical MD, and any difference in inclination or azimuth is flagged.';
+      v.textContent = 'Waiting for files';
+      return;
+    }
+    const names = others.map((s) => `<b>${s.label}</b>`);
+    lede.innerHTML = others.length
+      ? `${names.join(' and ')} checked against the <b>${ref.label}</b> surveys.`
+      : `<b>${ref.label}</b> loaded. Add the DD or correction-provider file to compare.`;
+    if (!others.length) { v.textContent = 'Waiting for a second file'; return; }
+    const totals = Object.values(summary);
+    const value = totals.reduce((a, c) => a + c.inc + c.azm, 0), gaps = totals.reduce((a, c) => a + c.miss + c.extra, 0);
+    if (!value && !gaps) { v.classList.add('ok'); v.textContent = 'All stations agree'; }
+    else if (value) { v.classList.add('bad'); v.textContent = `${plural(value, 'value mismatch')}${gaps ? ` · ${plural(gaps, 'station gap')}` : ''}`; }
+    else { v.classList.add('miss'); v.textContent = `Values agree · ${plural(gaps, 'station gap')}`; }
+  }
+
+  function renderTiles(ref, others, summary, total) {
+    const el = $('tiles');
+    if (!ref) { el.innerHTML = `<div class="tile empty"><div class="label">Nothing loaded yet</div><div class="value">Load at least two files to compare.</div></div>`; return; }
+    if (!others.length) { el.innerHTML = `<div class="tile empty"><div class="label"><span class="dot" style="--c:${ref.color}"></span>${ref.label} · ${plural(total, 'station')}</div><div class="value">Waiting for the DD or correction-provider file.</div></div>`; return; }
+    el.innerHTML = others.map((s) => {
+      const c = summary[s.key];
+      const tone = c.issues ? (c.inc + c.azm ? 'bad' : 'miss') : 'ok';
+      return `<div class="tile ${tone}">
+        <div class="label"><span class="dot" style="--c:${s.color}"></span>${s.label} <span class="vs">vs ${ref.label}</span></div>
+        <div class="value">${c.issues}<small>${c.issues === 1 ? 'issue' : 'issues'}</small></div>
+        <div class="breakdown">
+          <span class="kv"><b>${c.matched}</b> matched</span>
+          <span class="kv ${c.inc ? 'bad' : ''}"><b>${c.inc}</b> INC</span>
+          <span class="kv ${c.azm ? 'bad' : ''}"><b>${c.azm}</b> AZM</span>
+          <span class="kv ${c.miss ? 'miss' : ''}"><b>${c.miss}</b> missing</span>
+          ${c.extra ? `<span class="kv miss"><b>${c.extra}</b> extra</span>` : ''}
+        </div></div>`;
+    }).join('');
+  }
+
+  // ---------- table ----------
+  function renderTable(rows, loaded, ref) {
+    const tbl = $('table');
+    const shown = state.onlyIssues ? rows.filter((r) => r.status !== 'ok') : rows;
+    $('rowCount').textContent = loaded.length ? (state.onlyIssues ? `${shown.length} of ${rows.length} with issues` : `${rows.length} stations`) : '';
+    if (!loaded.length) { tbl.innerHTML = '<tbody><tr class="emptyrow"><td>Load survey files above to populate the comparison.</td></tr></tbody>'; return; }
+
+    let grp = '<tr class="grp"><th class="l">MD <span style="color:var(--muted);font-weight:500;font-family:var(--f-body);font-size:12px">ft</span></th>';
+    let sub = '<tr class="sub"><th class="l"></th>';
+    loaded.forEach((s) => {
+      const isRef = s === ref;
+      grp += `<th class="gsrc sep" colspan="2" style="--c:${s.color}"><span class="lbl"><i></i>${s.label}${isRef ? '<span class="tag">ref</span>' : ''}</span></th>`;
+      sub += `<th class="sep">INC</th><th>AZM</th>`;
+    });
+    grp += '<th class="sep l">Status</th></tr>'; sub += '<th class="sep"></th></tr>';
+
+    const body = shown.map((r) => {
+      let tds = `<td class="l num md">${fmt(r.md, r.md % 1 ? 2 : 0)}</td>`;
+      loaded.forEach((s) => {
+        const it = r.items[s.key], isRef = s === ref;
+        if (!it) { tds += `<td class="sep gone" colspan="2">not in ${s.label}</td>`; return; }
+        const d = r.deltas[s.key];
+        // The reference cell a flagged value is being checked against goes amber; the flagged value itself is red; everything else stays plain.
+        const ds = Object.values(r.deltas);
+        const hotInc = isRef && ds.some((x) => x.fInc) ? 'hot' : '', hotAzm = isRef && ds.some((x) => x.fAzm) ? 'hot' : '';
+        tds += `<td class="sep num ${hotInc} ${d && d.fInc ? 'flag' : ''}">${fmt(it.inc)}</td><td class="num ${hotAzm} ${d && d.fAzm ? 'flag' : ''}">${fmt(it.azm)}</td>`;
+      });
+      tds += `<td class="sep l"><span class="st ${r.status}">${r.status === 'ok' ? 'Match' : r.status === 'mismatch' ? 'Mismatch' : 'Missing'}</span></td>`;
+      return `<tr class="${r.status === 'ok' ? '' : 'issue'}">${tds}</tr>`;
+    }).join('') || `<tr class="emptyrow"><td colspan="20">Every station matches exactly.</td></tr>`;
+
+    tbl.innerHTML = `<thead>${grp}${sub}</thead><tbody>${body}</tbody>`;
+    issueIdx = -1; syncNav();
+  }
+
+  function toCSV() {
+    const rows = state.onlyIssues ? lastRows.filter((r) => r.status !== 'ok') : lastRows;
+    if (!lastRef) return '';
+    const head = ['MD'];
+    lastLoaded.forEach((s) => { head.push(s.label + ' INC', s.label + ' AZM'); });
+    head.push('Status');
+    const lines = [head.join(',')];
+    rows.forEach((r) => {
+      const line = [fmt(r.md, 2)];
+      lastLoaded.forEach((s) => {
+        const it = r.items[s.key];
+        line.push(it ? fmt(it.inc) : '', it ? fmt(it.azm) : '');
+      });
+      line.push(r.status === 'ok' ? 'match' : r.status + (r.missing.length ? ' (' + r.missing.map((k) => SRC.find((s) => s.key === k).label).join(' ') + ')' : ''));
+      lines.push(line.join(','));
+    });
+    return lines.join('\r\n');
+  }
+
+  // ---------- controls ----------
+  function saveSettings() { try { localStorage.setItem('sc.settings', JSON.stringify({ onlyIssues: state.onlyIssues })); } catch (e) { /* ignore */ } }
+  function setFilter(onlyIssues) {
+    state.onlyIssues = onlyIssues; saveSettings();
+    $('segAll').classList.toggle('on', !onlyIssues); $('segIssues').classList.toggle('on', onlyIssues);
+    renderTable(lastRows, lastLoaded, lastRef);
+  }
+  $('segAll').addEventListener('click', () => setFilter(false));
+  $('segIssues').addEventListener('click', () => setFilter(true));
+  $('btnClear').addEventListener('click', () => { state.files = {}; SRC.forEach((s) => renderCard(s.key)); recompute(); });
+  // Issue navigation: First jumps to the top issue row, Next walks down from the highlighted one.
+  let issueIdx = -1;
+  const issueRows = () => document.querySelectorAll('#table tbody tr.issue');
+  function syncNav() {
+    const n = issueRows().length;
+    $('btnNext').hidden = !(issueIdx >= 0 && issueIdx < n - 1);
+  }
+  function jumpTo(i) {
+    const rows = issueRows(), row = rows[i];
+    if (!row) return;
+    rows.forEach((t) => t.classList.remove('target'));
+    row.classList.add('target');
+    const box = document.querySelector('.tscroll');
+    box.scrollTop = Math.max(0, row.offsetTop - 68 - 120);
+    row.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    issueIdx = i; syncNav();
+  }
+  $('btnFirst').addEventListener('click', () => {
+    if (!issueRows().length) { toast(lastLoaded.length > 1 ? 'No issues to jump to.' : 'Load two files first.'); return; }
+    jumpTo(0);
+  });
+  $('btnNext').addEventListener('click', () => jumpTo(issueIdx + 1));
+  $('btnCopy').addEventListener('click', () => {
+    const csv = toCSV(); if (!csv) { toast('Nothing to copy yet.'); return; }
+    const done = () => toast('Copied ' + plural(csv.split('\r\n').length - 1, 'row') + ' as CSV');
+    const fallback = () => { const ta = document.createElement('textarea'); ta.value = csv; ta.style.position = 'fixed'; ta.style.opacity = '0'; document.body.appendChild(ta); ta.select(); try { document.execCommand('copy'); done(); } catch (e) { toast('Copy blocked by the browser.'); } ta.remove(); };
+    if (navigator.clipboard && navigator.clipboard.writeText) navigator.clipboard.writeText(csv).then(done, fallback); else fallback();
+  });
+  let toastT; function toast(msg) { const t = $('toast'); t.textContent = msg; t.classList.add('show'); clearTimeout(toastT); toastT = setTimeout(() => t.classList.remove('show'), 2200); }
+
+  buildCards();
+  $('segAll').classList.toggle('on', !state.onlyIssues); $('segIssues').classList.toggle('on', state.onlyIssues);
+  if (typeof XLSX === 'undefined') { $('tiles').innerHTML = '<div class="tile empty"><div class="label">Parser failed to load</div><div class="value">The spreadsheet library could not be loaded. Check your connection and reload.</div></div>'; return; }
+  recompute();
+})();
+</script>
